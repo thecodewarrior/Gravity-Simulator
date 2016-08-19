@@ -14,7 +14,8 @@ define([
 	var render = undefined;
 	var canvas = undefined;
 	var massMultiplier = undefined; // How exagurated the size of the objects are (humans like that)
-
+    var orbitMass = undefined; // The size (in effective mouse pixels) of the default orbiting masses
+    
 	// Function that controls the left mouse which controls the massbuilder
 	/*
 		States:
@@ -179,6 +180,15 @@ define([
 			render.updateMassMultiplier(massMultiplierInput.value);
 			spacetime.updateMassMultiplier(massMultiplierInput.value);
 		});
+        
+		var orbitMassInput = document.getElementById('menu-orbit-mass');
+		orbitMassInput.value = 2;
+        orbitMass = 2;
+		orbitMassInput.addEventListener('change', function () {
+			orbitMass = orbitMassInput.value;
+			//render.updateOrbitMass(massMultiplierInput.value);
+			//spacetime.updateMassMultiplier(massMultiplierInput.value);
+		});
 
 		var zoomInput = document.getElementById('menu-zoom');
 		zoomInput.value = 1;
@@ -229,7 +239,7 @@ define([
 					if (menuCustomMass)
 						massBuilder(e)
 					else
-						autoOrbit(e, 0.5);
+						autoOrbit(e, (4 / 3 * Math.PI) * Math.pow(orbitMass, 3) / massMultiplier);
 				}
 			};
 		};
