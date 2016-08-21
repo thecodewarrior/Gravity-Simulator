@@ -69,7 +69,7 @@ define([
 				mouse.radius = Math.sqrt(Math.pow(mouse.x - mouse.x2, 2) + Math.pow(mouse.y - mouse.y2, 2));
 				if (e.type === 'mousedown') {
 					var mass = (4 / 3 * Math.PI) * Math.pow(orbitMass, 3) / massMultiplier;
-					var count = ( Math.PI * Math.pow(mouse.radius, 2) / (50*50) ) * diskDensity;
+					var count = ( Math.PI * Math.pow(mouse.radius, 2) / (50*50*render.getCamera().zoom) ) * diskDensity;
                     
                     for(var i = 0; i < count; i++) {
                         var pt_angle = Math.random() * 2 * Math.PI;
