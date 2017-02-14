@@ -16,7 +16,7 @@ define([
 	var massMultiplier = undefined; // How exagurated the size of the objects are (humans like that)
     var orbitMass = undefined; // The size (in effective mouse pixels) of the default orbiting masses
     var diskDensity = undefined; // the density of disk generation
-    
+
 	// Function that controls the left mouse which controls the massbuilder
 	/*
 		States:
@@ -42,8 +42,8 @@ define([
 			case 'placement':
 				// This state ^
 				mouse.state = 'mass';
-				mouse.x2 = e.clientX;
-				mouse.y2 = e.clientY;
+				mouse.x2 = e.pageX - canvas.offsetLeft;
+				mouse.y2 = e.pageY - canvas.offsetTop;
 				mouse.radius = 0;
 				break;
 			case 'mass':
@@ -70,26 +70,26 @@ define([
 				if (e.type === 'mousedown') {
 					var mass = (4 / 3 * Math.PI) * Math.pow(orbitMass, 3) / massMultiplier;
 					var count = ( Math.PI * Math.pow(mouse.radius, 2) / (50*50*render.getCamera().zoom*render.getCamera().zoom) ) * diskDensity;
-                    
+
                     for(var i = 0; i < count; i++) {
                         var pt_angle = Math.random() * 2 * Math.PI;
                         var pt_radius_sq = Math.random() * mouse.radius * mouse.radius;
                         var pt_x = Math.sqrt(pt_radius_sq) * Math.cos(pt_angle);
                         var pt_y = Math.sqrt(pt_radius_sq) * Math.sin(pt_angle);
-                        
+
             			var x = render.getCamera().getMouseX(mouse.x2 + pt_x);
             			var y = render.getCamera().getMouseY(mouse.y2 + pt_y);
-                        autoOrbit(e, mass, x, y); 
+                        autoOrbit(e, mass, x, y);
                     }
 					//Reset state machine
 					mouse.state = 'placement';
 					mouse.radius = 0;
 				}
 				break;
-            case 'select':
-                if (e.type === 'mousedown') {
-                    spacetime.selectFocus(render.getCamera().getMouseX(mouse.x), render.getCamera().getMouseY(mouse.y))
-                }
+			case 'select':
+				if (e.type === 'mousedown') {
+					spacetime.selectFocus(render.getCamera().getMouseX(mouse.x), render.getCamera().getMouseY(mouse.y))
+				}
 			case 'velocity':
 				// This state ^
 
@@ -161,8 +161,11 @@ define([
 
 	var mouseMove = function (e) {
 		// console.log('x:' + e.clientX + ' y:' + e.clientY);
-		mouse.x = e.clientX;
-		mouse.y = e.clientY;
+		// mouse.x = e.clientX;
+		// mouse.y = e.clientY;
+
+		mouse.x = e.pageX - canvas.offsetLeft;
+		mouse.y = e.pageY - canvas.offsetTop;
 
 		if (mouse.state === 'mass' || mouse.state === 'velocity' || mouse.state === 'disk') {
 			massBuilder(e);
@@ -182,7 +185,7 @@ define([
 		render = p_render;
 		canvas = p_canvas;
 		massMultiplier = p_massMultiplier;
-        
+
 		menuShowGrid = document.getElementById('menu-toggle-grid');
 		render.setDrawGrid(menuShowGrid.checked);
 		menuShowGrid.addEventListener('change', function () {
@@ -192,16 +195,16 @@ define([
 		document.getElementById('menu-toggle-custom-mass').addEventListener('change', function () {
 			menuCustomMass = document.getElementById('menu-toggle-custom-mass').checked;
 		});
-        
+
 		render.setDrawPath(document.getElementById('menu-toggle-draw-path').checked);
 		document.getElementById('menu-toggle-draw-path').addEventListener('change', function () {
 		    render.setDrawPath(document.getElementById('menu-toggle-draw-path').checked);
 		});
-        
+
 		document.getElementById('menu-reset-camera').onmousedown = function () {
 		    render.resetCamera();
 		}
-        
+
 		document.getElementById('menu-gen-disk').onmousedown = function () {
     	    var focusedObject = spacetime.getFocusedObject();
     	    if (focusedObject === false)
@@ -210,7 +213,7 @@ define([
             mouse.x2 = render.getCamera().getX(focusedObject.x)
             mouse.y2 = render.getCamera().getY(focusedObject.y)
 		}
-        
+
 		document.getElementById('menu-select-focus').onmousedown = function () {
 		    mouse.state = 'select'
 		}
@@ -222,7 +225,7 @@ define([
 			render.updateMassMultiplier(massMultiplierInput.value);
 			spacetime.updateMassMultiplier(massMultiplierInput.value);
 		});
-        
+
 		var orbitMassInput = document.getElementById('menu-orbit-mass');
 		orbitMassInput.value = 2;
         orbitMass = 2;
@@ -231,7 +234,7 @@ define([
 			//render.updateOrbitMass(massMultiplierInput.value);
 			//spacetime.updateMassMultiplier(massMultiplierInput.value);
 		});
-        
+
 		var diskDensityInput = document.getElementById('menu-disk-density');
 		diskDensityInput.value = 2;
         diskDensity = 2;
