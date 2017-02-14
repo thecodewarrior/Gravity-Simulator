@@ -300,6 +300,32 @@ define([
 					spacetime[0].cameraFocus = true;
 				};
 			}
+            
+			api.selectFocus = function(posX, posY){
+				var objectFound = -1;
+                var closestDistSq = 1000000000;
+
+				for (var i = 0; i < spacetime.length; i++) {
+					if(spacetime[i].cameraFocus !== undefined && spacetime[i].cameraFocus === true){
+						spacetime[i].cameraFocus = false;
+					}
+                    var o = spacetime[i]
+					var distX = o.x-posX
+                    var distY = o.y-posY
+                    var distSq = distX*distX+distY*distY
+                    if(distSq < closestDistSq) {
+                        objectFound = i
+                        closestDistSq = distSq
+                    }
+                    
+				};
+                
+                if (objectFound !== -1) {
+                    spacetime[objectFound].cameraFocus = true
+                } else if (spacetime.length > 0) {
+					spacetime[0].cameraFocus = true;
+				};
+			}
 
 			api.getSpace = function(){
 				return spacetime;

@@ -86,6 +86,10 @@ define([
 					mouse.radius = 0;
 				}
 				break;
+            case 'select':
+                if (e.type === 'mousedown') {
+                    spacetime.selectFocus(render.getCamera().getMouseX(mouse.x), render.getCamera().getMouseY(mouse.y))
+                }
 			case 'velocity':
 				// This state ^
 
@@ -206,6 +210,10 @@ define([
             mouse.x2 = render.getCamera().getX(focusedObject.x)
             mouse.y2 = render.getCamera().getY(focusedObject.y)
 		}
+        
+		document.getElementById('menu-select-focus').onmousedown = function () {
+		    mouse.state = 'select'
+		}
 
 		var massMultiplierInput = document.getElementById('menu-mass-multiplier');
 		massMultiplierInput.value = 200;
@@ -260,7 +268,7 @@ define([
 			if (e.which === 1) {
 				// console.log('left mouse click');
 				// console.log(spacetime.getSpace().length);
-                if(mouse.state === 'drag') {
+                if(mouse.state === 'drag' || mouse.state === 'select') {
                     massBuilder(e);
                 } else if ((mouse.state != 'placement' && mouse.orbit == 'auto')) { //if user was trying to put an auto-orbiting mass, and clicked left button, then he is probably trying to cancel. Cancel then.
 					// Reset state machine
@@ -274,7 +282,7 @@ define([
 			}
 			else if (e.which === 3) {
 				// console.log('right mouse click');
-                if(mouse.state === 'drag') {
+                if(mouse.state === 'drag' || mouse.state === 'select') {
 					mouse.state = 'placement';
 					mouse.radius = 0;
                 } else if ((mouse.state != 'placement' && mouse.orbit == 'custom')) { //if user was trying to put a custom mass, and clicked right button, then he is probably trying to cancel. Cancel then.
